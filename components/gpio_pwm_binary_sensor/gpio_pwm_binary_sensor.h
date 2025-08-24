@@ -40,7 +40,6 @@ class GPIOPWMBinarySensor : public binary_sensor::BinarySensor, public Component
   // Interrupts are only detached on reboot when memory is cleared anyway.
 
   void set_pin(GPIOPin *pin) { pin_ = pin; }
-  void set_interrupt_type(gpio::InterruptType type) { interrupt_type_ = type; }
   // ========== INTERNAL METHODS ==========
   // (In most use cases you won't need these)
   /// Setup pin
@@ -55,13 +54,11 @@ class GPIOPWMBinarySensor : public binary_sensor::BinarySensor, public Component
   void set_debounce_ms(uint32_t ms) { debounce_ms = ms; }
 
 protected:
-  // void change_state(bool new_state);
   void set_pending_state(bool new_state);
   void flush_pending_state();
 
  protected:
   GPIOPin *pin_;
-  gpio::InterruptType interrupt_type_{gpio::INTERRUPT_ANY_EDGE};
   GPIOPWMBinarySensorStore store_;
 
   bool use_interrupt_ = true;

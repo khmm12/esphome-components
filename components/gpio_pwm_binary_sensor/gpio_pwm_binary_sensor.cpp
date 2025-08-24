@@ -6,6 +6,9 @@ namespace gpio_pwm_binary_sensor {
 
 static const char *const TAG = "gpio.pwm_binary_sensor";
 
+static const gpio::InterruptType INTERRUPT_TYPE = gpio::INTERRUPT_RISING_EDGE;
+static const bool ACTIVE = true;
+
 void IRAM_ATTR GPIOPWMBinarySensorStore::gpio_intr(GPIOPWMBinarySensorStore *arg) {
   arg->triggered_state_ = arg->isr_pin_.digital_read();
   arg->triggered_ = true;
@@ -27,7 +30,7 @@ void GPIOPWMBinarySensor::setup() {
 
   if (!this->use_interrupt_) {
     auto *internal_pin = static_cast<InternalGPIOPin *>(this->pin_);
-    this->store_.setup(internal_pin, this->interrupt_type_, this);
+    this->store_.setup(internal_pin, INTERRUPT_TYPE, this);
   }
 
   this->actual_state_ = this->pin_->digital_read();
@@ -37,39 +40,24 @@ void GPIOPWMBinarySensor::setup() {
 void GPIOPWMBinarySensor::dump_config() {
   LOG_BINARY_SENSOR("", "GPIO PWM Binary Sensor", this);
   LOG_PIN("  Pin: ", this->pin_);
-  const char *interrupt_type;
-  switch (this->interrupt_type_) {
-    case gpio::INTERRUPT_RISING_EDGE:
-      interrupt_type = "RISING_EDGE";
-      break;
-    case gpio::INTERRUPT_FALLING_EDGE:
-      interrupt_type = "FALLING_EDGE";
-      break;
-    default:
-      interrupt_type = "UNKNOWN";
-      break;
-  }
-  ESP_LOGCONFIG(TAG, "  Interrupt Type: %s", interrupt_type);
 }
 
 void GPIOPWMBinarySensor::loop() {
-  bool expected_active = true;
-
   bool has_triggered = false;
 
   if (!this->use_interrupt_ && this->store_.has_triggered()) {
-    has_triggered = this->store_.triggered_state() == expected_active; // Ignore anomalies
+    has_triggered = this->store_.triggered_state() == ACTIVE; // Ignore anomalies
     this->store_.clear_triggered();
   }
 
-  if (has_triggered || this->pin_->digital_read() == expected_active) {
+  if (has_triggered || this->pin_->digital_read() == ACTIVE) {
     // active
     this->last_active_at_ms = millis();
     // publish state active
-    this->set_pending_state(expected_active);
+    this->set_pending_state(ACTIVE);
   } else if (millis() - this->last_active_at_ms > this->delayed_off_ms) {
     // publish state inactive
-    this->set_pending_state(!expected_active);
+    this->set_pending_state(!ACTIVE);
   }
 
   this->flush_pending_state();

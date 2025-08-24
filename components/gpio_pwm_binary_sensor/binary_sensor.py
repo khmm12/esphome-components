@@ -13,8 +13,6 @@ from esphome.const import (
 )
 from esphome.core import CORE
 
-from esphome.components.gpio import gpio_ns
-
 _LOGGER = logging.getLogger(__name__)
 
 gpio_pwm_binary_sensor_ns = cg.esphome_ns.namespace("gpio_pwm_binary_sensor")
@@ -23,23 +21,14 @@ GPIOPWMBinarySensor = gpio_pwm_binary_sensor_ns.class_(
     "GPIOPWMBinarySensor", binary_sensor.BinarySensor, cg.Component
 )
 
-CONF_INTERRUPT_TYPE = "interrupt_type"
 CONF_DELAYED_OFF = "delayed_off"
 CONF_DEBOUNCE = "debounce"
-
-INTERRUPT_TYPES = {
-    "RISING": gpio_ns.INTERRUPT_RISING_EDGE,
-    "FALLING": gpio_ns.INTERRUPT_FALLING_EDGE
-}
 
 CONFIG_SCHEMA = (
     binary_sensor.binary_sensor_schema(GPIOPWMBinarySensor)
     .extend(
         {
             cv.Required(CONF_PIN): pins.gpio_input_pin_schema,
-            cv.Optional(CONF_INTERRUPT_TYPE): cv.enum(
-                INTERRUPT_TYPES, upper=True
-            ),
             cv.Optional(CONF_DELAYED_OFF, default="20ms"): cv.positive_time_period_milliseconds,
             cv.Optional(CONF_DEBOUNCE, default="20ms"): cv.positive_time_period_milliseconds
         }
@@ -79,8 +68,6 @@ async def to_code(config):
             config.get(CONF_NAME, config[CONF_ID]),
             config[CONF_PIN][CONF_NUMBER],
         )
-
-    cg.add(var.set_interrupt_type(config[CONF_INTERRUPT_TYPE]))
 
     cg.add(var.set_delayed_off_ms(config[CONF_DELAYED_OFF]))
     cg.add(var.set_debounce_ms(config[CONF_DEBOUNCE]))
