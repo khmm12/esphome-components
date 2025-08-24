@@ -44,7 +44,7 @@ void GPIOPWMBinarySensor::loop() {
   bool has_triggered = false;
 
   if (!this->is_interrupts_configured_ && this->store_.has_triggered()) {
-    has_triggered = this->store_.triggered_state() == ACTIVE; // Ignore anomalies
+    has_triggered = this->store_.triggered_state() == ACTIVE;  // Ignore anomalies
     this->store_.clear_triggered();
   }
 
@@ -62,9 +62,10 @@ void GPIOPWMBinarySensor::loop() {
 }
 
 void GPIOPWMBinarySensor::set_pending_state(bool new_state) {
-  if (new_state == this->pending_state_) return; // No change needed
+  if (new_state == this->pending_state_)
+    return;  // No change needed
 
-  ESP_LOGD(TAG, "Pending state changed from %s to %s", this->pending_state_? "ON" : "OFF", new_state ? "ON" : "OFF");
+  ESP_LOGD(TAG, "Pending state changed from %s to %s", this->pending_state_ ? "ON" : "OFF", new_state ? "ON" : "OFF");
 
   this->pending_state_ = new_state;
   this->pending_state_changed_at_ms = millis();
@@ -72,12 +73,15 @@ void GPIOPWMBinarySensor::set_pending_state(bool new_state) {
 }
 
 void GPIOPWMBinarySensor::flush_pending_state() {
-  if (!this->has_pending_state_) return;
+  if (!this->has_pending_state_)
+    return;  // no pending state to flush
 
-  if (millis() - this->pending_state_changed_at_ms < this->debounce_ms) return; // too early, skip
+  if (millis() - this->pending_state_changed_at_ms < this->debounce_ms)
+    return;  // too early, skip
 
   if (this->actual_state_ != this->pending_state_) {
-    ESP_LOGD(TAG, "Flushing pending state from %s to %s", this->actual_state_ ? "ON" : "OFF", this->pending_state_? "ON" : "OFF");
+    ESP_LOGD(TAG, "Flushing pending state from %s to %s", this->actual_state_ ? "ON" : "OFF",
+             this->pending_state_ ? "ON" : "OFF");
 
     this->actual_state_ = this->pending_state_;
     this->publish_state(this->actual_state_);

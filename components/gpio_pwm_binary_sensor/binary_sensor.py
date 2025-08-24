@@ -29,8 +29,12 @@ CONFIG_SCHEMA = (
     .extend(
         {
             cv.Required(CONF_PIN): pins.gpio_input_pin_schema,
-            cv.Optional(CONF_DELAYED_OFF, default="20ms"): cv.positive_time_period_milliseconds,
-            cv.Optional(CONF_DEBOUNCE, default="20ms"): cv.positive_time_period_milliseconds
+            cv.Optional(
+                CONF_DELAYED_OFF, default="20ms"
+            ): cv.positive_time_period_milliseconds,
+            cv.Optional(
+                CONF_DEBOUNCE, default="20ms"
+            ): cv.positive_time_period_milliseconds,
         }
     )
     .extend(cv.COMPONENT_SCHEMA)

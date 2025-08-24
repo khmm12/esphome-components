@@ -15,13 +15,9 @@ class GPIOPWMBinarySensorStore {
 
   static void gpio_intr(GPIOPWMBinarySensorStore *arg);
 
-  bool has_triggered() const {
-    return this->triggered_;
-  }
+  bool has_triggered() const { return this->triggered_; }
 
-  bool triggered_state() const {
-    return this->triggered_state_;
-  }
+  bool triggered_state() const { return this->triggered_state_; }
 
   void clear_triggered() {
     this->triggered_ = false;
@@ -49,7 +45,7 @@ class GPIOPWMBinarySensor : public binary_sensor::BinarySensor, public Component
   float get_setup_priority() const override;
   void loop() override;
 
-protected:
+ protected:
   void set_pending_state(bool new_state);
   void flush_pending_state();
 
