@@ -25,12 +25,10 @@ void GPIOPWMBinarySensorStore::setup(InternalGPIOPin *pin, gpio::InterruptType t
 void GPIOPWMBinarySensor::setup() {
   if (!this->pin_->is_internal()) {
     ESP_LOGE(TAG, "GPIO is not internal. Please configure the GPIO as internal.");
-    this->use_interrupt_ = false;
-  }
-
-  if (!this->use_interrupt_) {
+  } else {
     auto *internal_pin = static_cast<InternalGPIOPin *>(this->pin_);
     this->store_.setup(internal_pin, INTERRUPT_TYPE, this);
+    this->is_interrupts_configured_ = true;
   }
 
   this->actual_state_ = this->pin_->digital_read();
@@ -45,7 +43,7 @@ void GPIOPWMBinarySensor::dump_config() {
 void GPIOPWMBinarySensor::loop() {
   bool has_triggered = false;
 
-  if (!this->use_interrupt_ && this->store_.has_triggered()) {
+  if (!this->is_interrupts_configured_ && this->store_.has_triggered()) {
     has_triggered = this->store_.triggered_state() == ACTIVE; // Ignore anomalies
     this->store_.clear_triggered();
   }
@@ -62,6 +60,7 @@ void GPIOPWMBinarySensor::loop() {
 
   this->flush_pending_state();
 }
+
 void GPIOPWMBinarySensor::set_pending_state(bool new_state) {
   if (new_state == this->pending_state_) return; // No change needed
 
