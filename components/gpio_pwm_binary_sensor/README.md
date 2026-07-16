@@ -20,6 +20,7 @@ The `debounce` option provides an additional layer of filtering, preventing the 
 
 ## Requirements and Limitations
 
+- Supported platforms: ESP8266 and ESP32. Both are compile-tested in CI; the author runs it on ESP8266 hardware, ESP32 hasn't seen real-device testing yet.
 - The pin must be an internal GPIO — interrupts are attached to it, so expander pins won't do. This is enforced at config validation.
 - `GPIO16` on the ESP8266 does not support interrupts and is rejected at config validation.
 - The pin cannot be shared with other components (`allow_other_uses` is rejected): the attached interrupt requires exclusive use of the pin.
@@ -42,7 +43,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/khmm12/esphome-components.git
-      ref: main
+      ref: v1.0.0 # or `main` for the latest
     components:
       - gpio_pwm_binary_sensor
 

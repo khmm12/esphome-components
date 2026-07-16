@@ -41,7 +41,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/khmm12/esphome-components.git
-      ref: main
+      ref: v1.0.0 # or `main` for the latest
     components:
       - direct_gpio_remote_transmitter
 
