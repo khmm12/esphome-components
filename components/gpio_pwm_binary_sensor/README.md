@@ -16,7 +16,7 @@ Whenever the signal is detected as active (either through an interrupt or by pol
 
 If no active signal is detected for a duration longer than `delayed_off`, the sensor's state changes to `OFF`. This logic effectively smooths a fast-pulsing signal into a stable binary state, correctly handling both PWM and steady-on signals.
 
-The `debounce` option provides an additional layer of filtering, preventing the state from flapping rapidly during state transitions (e.g., when a device is turning off) or when the microcontroller is busy.
+The `debounce` option provides an additional layer of filtering, preventing the state from flapping rapidly during state transitions (e.g., when a device is turning off) or when the microcontroller is busy. Note that `debounce` applies on top of `delayed_off`, so the total delay before the sensor reports `OFF` is `delayed_off + debounce`.
 
 ## Example Configuration
 
