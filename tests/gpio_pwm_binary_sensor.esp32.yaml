@@ -1,0 +1,22 @@
+esphome:
+  name: test-pwm-bs-esp32
+
+esp32:
+  board: esp32dev
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components: [gpio_pwm_binary_sensor]
+
+binary_sensor:
+  - platform: gpio_pwm_binary_sensor
+    id: power_feedback
+    name: Power Feedback
+    pin:
+      number: GPIO4
+      inverted: true
+      mode: INPUT_PULLUP
+    delayed_off: 20ms
+    debounce: 20ms

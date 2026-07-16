@@ -1,0 +1,32 @@
+esphome:
+  name: test-direct-tx-esp8266
+
+esp8266:
+  board: d1_mini
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components: [direct_gpio_remote_transmitter]
+
+# Two instances to cover MULTI_CONF.
+direct_gpio_remote_transmitter:
+  - id: tx_one
+    pin:
+      number: D5
+      inverted: true
+  - id: tx_two
+    pin:
+      number: D6
+      inverted: true
+
+button:
+  - platform: template
+    id: send_nec
+    name: Send NEC
+    on_press:
+      - remote_transmitter.transmit_nec:
+          transmitter_id: tx_two
+          address: 0xFE01
+          command: 0xEB14

@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      # Pinned to the version used locally, so CI and dev machines agree.
+      - run: pip install clang-format==22.1.8
+      - run: find components -name '*.cpp' -o -name '*.h' | xargs clang-format --dry-run --Werror
+
+  yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install yamllint
+      - run: yamllint tests/ .github/
+
+  compile:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - tests/gpio_pwm_binary_sensor.esp8266.yaml
+          - tests/gpio_pwm_binary_sensor.esp32.yaml
+          - tests/direct_gpio_remote_transmitter.esp8266.yaml
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v6
+        with:
+          path: |
+            ~/.platformio
+            tests/.esphome
+          key: pio-${{ matrix.config }}-${{ hashFiles('.github/workflows/ci.yaml') }}
+          restore-keys: |
+            pio-${{ matrix.config }}-
+      - run: pip install esphome
+      - run: esphome compile ${{ matrix.config }}
