@@ -22,7 +22,7 @@ class DirectGPIORemoteTransmitter final : public remote_base::RemoteTransmitterB
 
  protected:
   void send_internal(uint32_t send_times, uint32_t send_wait) override;
-  void wait_for_target_();
+  void write_edge_(bool level);
   void write_timing_(bool level, uint32_t duration_us);
 
   uint32_t target_time_us_{0};
