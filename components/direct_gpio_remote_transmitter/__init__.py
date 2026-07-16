@@ -5,6 +5,7 @@ import esphome.config_validation as cv
 from esphome.const import CONF_ID, CONF_PIN
 
 AUTO_LOAD = ["remote_base"]
+MULTI_CONF = True
 
 direct_gpio_remote_transmitter_ns = cg.esphome_ns.namespace(
     "direct_gpio_remote_transmitter"
