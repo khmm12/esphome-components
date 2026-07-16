@@ -13,18 +13,7 @@ Don't be surprised if you spot the occasional bit of humour or an optimistic nod
 | [gpio_pwm_binary_sensor](components/gpio_pwm_binary_sensor/) | Turns a fast-changing PWM input (e.g. a "breathing" indicator LED) into a stable ON/OFF binary sensor, using interrupts so even the shortest pulses are never missed | ESP8266, ESP32 |
 | [direct_gpio_remote_transmitter](components/direct_gpio_remote_transmitter/) | Remote-control transmitter for a direct-wired, already-demodulated line; keeps interrupts enabled during transmission, avoiding the ESP8266 Wi-Fi crash caused by the stock `remote_transmitter` | ESP8266 |
 
-## Usage
-
-```yaml
-external_components:
-  - source:
-      type: git
-      url: https://github.com/khmm12/esphome-components.git
-      ref: main
-    components: [gpio_pwm_binary_sensor]
-```
-
-Each component's README covers its configuration and the story behind it.
+Each component's README covers its configuration, a ready-to-paste `external_components` snippet, and the story behind it.
 
 ## Disclaimer
 
